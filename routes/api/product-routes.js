@@ -3,17 +3,11 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
 
-// get all products
+// find all products
 router.get('/', async (req, res) => {
-  // find all products
-  // be sure to include its associated Category and Tag data
+
   try {
     const productData = await Product.findAll({
-      // include: [Category,
-      //   {
-      //     model: Tag,
-      //     through: ProductTag
-      //   }]
       include: [{ model: Category }, { model: Tag }]
     });
 
@@ -29,13 +23,11 @@ router.get('/', async (req, res) => {
 
 });
 
-// get one product
+// find a single product by its `id`
 router.get('/:id', async (req, res) => {
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
   try {
     const productData = await Product.findByPk(req.params.id, {
-      include: [{ model: Product, through: ProductTag, as: "Product's_tag" }]
+      include: [Category, { model: Tag, through: ProductTag }]
     });
 
     if (!productData) {
@@ -50,15 +42,17 @@ router.get('/:id', async (req, res) => {
 });
 
 // create new product
-router.post('/', (req, res) => {
-  /* req.body should look like this...
+/* req.body should look like this (json format in insomnia):
     {
-      product_name: "Basketball",
-      price: 200.00,
-      stock: 3,
-      tagIds: [1, 2, 3, 4]
+      "product_name": "Cool Song by Beta",
+      "price": "200.00",
+      "stock": "3",
+      "category_id":"3",
+      "tagIds": ["1", "2", "3", "4"]
     }
-  */
+*/
+router.post('/', (req, res) => {
+
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -81,7 +75,14 @@ router.post('/', (req, res) => {
     });
 });
 
-// update product
+// update product by given names and values
+/*req.body should look like this (json format in insomnia):
+    {
+      "product_name": "Cool Song by Gemma",
+      "stock": "20"
+      "...":"..."
+    }
+*/
 router.put('/:id', (req, res) => {
   // update product data
   Product.update(req.body, {
@@ -123,8 +124,8 @@ router.put('/:id', (req, res) => {
     });
 });
 
+// delete one product by its `id` value
 router.delete('/:id', async (req, res) => {
-  // delete one product by its `id` value
   try {
     const productData = await Product.destroy({
       where: {

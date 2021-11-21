@@ -3,9 +3,9 @@ const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
 
+// find all tags
 router.get('/', async(req, res) => {
-  // find all tags
-  // be sure to include its associated Product data
+
   try {
     const tagData = await Tag.findAll({
       include: [{ model: Product }]
@@ -22,12 +22,11 @@ router.get('/', async(req, res) => {
   }
 });
 
+// find a single tag by its `id`
 router.get('/:id', async (req, res) => {
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
   try {
     const tagData = await Tag.findByPk(req.params.id,{
-      include: [{ model: Product }]
+      include: [{ model: Product, through: ProductTag}]
     });
 
     if (!tagData) {
@@ -41,8 +40,13 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// create a new tag
+/* req.body should look like this (json format in insomnia):
+    {
+      "tag_name": "Wear"
+    }
+*/
 router.post('/', async (req, res) => {
-  // create a new tag
   try {
     const tagData = await Tag.create(req.body);
 
@@ -57,8 +61,13 @@ router.post('/', async (req, res) => {
   }
 });
 
+// update a tag's name
+/* req.body should look like this (json format in insomnia):
+    {
+      "tag_name": "apparel"
+    }
+*/
 router.put('/:id', async (req, res) => {
-  // update a tag's name by its `id` value
   try {
     const tagData = await Tag.update(
       {
@@ -81,8 +90,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// delete on tag by its `id` value
 router.delete('/:id', async (req, res) => {
-  // delete on tag by its `id` value
   try {
     const tagData = await Tag.destroy({
       where: {
