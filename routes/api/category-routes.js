@@ -6,23 +6,31 @@ const { Category, Product, ProductTag } = require('../../models');
 router.get('/', async (req, res) => {
   // find all categories
   // be sure to include its associated Products
-  try {
-    const categoryData = await Category.findAll({
-      include: [{
-        model: Product,
-        attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
-      }],
-    });
+  Category
+    .findAll({
+      include: [Product],
+    })
+    .then((categories) => res.json(categories))
+    .catch((err) => res.status(500).json(err));
 
-    if (!categoryData) {
-      res.status(404).json({ message: 'No Category found!' });
-      return;
-    }
 
-    res.status(200).json(categoryData);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  // try {
+  //   const categoryData = await Category.findAll({
+  //     include: [{
+  //       model: Product,
+  //       attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
+  //     }],
+  //   });
+
+  //   if (!categoryData) {
+  //     res.status(404).json({ message: 'No Category found!' });
+  //     return;
+  //   }
+
+  //   res.status(200).json(categoryData);
+  // } catch (err) {
+  //   res.status(500).json(err);
+  // }
 
 });
 
