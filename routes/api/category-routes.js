@@ -8,7 +8,10 @@ router.get('/', async (req, res) => {
   // be sure to include its associated Products
   try {
     const categoryData = await Category.findAll({
-      include: [{ model: Product }],
+      include: [{
+        model: Product,
+        attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
+      }],
     });
 
     if (!categoryData) {
@@ -30,8 +33,9 @@ router.get('/:id', async (req, res) => {
     const categoryData = await Category.findByPk(req.params.id, {
       include: [{
         model: Product,
-        //through: ProductTag
-      }] // + as?
+        attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
+        //through: ProductTag?
+      }]
     });
 
     if (!categoryData) {
@@ -69,10 +73,10 @@ router.put('/:id', async (req, res) => {
         category_name: req.body.category_name
       },
       {
-      where: {
-        id: req.params.id
-      }
-    });
+        where: {
+          id: req.params.id
+        }
+      });
 
     if (!categoryData) {
       res.status(404).json({ message: 'Cannot update category with this id!' });
