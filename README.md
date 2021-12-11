@@ -18,7 +18,7 @@ This is a E-commerce Back End database application. The database keeps track of 
 Before start, make sure there's a database selected. You will need to run commands in mysql shell to execute the schema.sql under the "db" folder. Log in to your mysql, then:
 
 ```
-soruce ./db/schema.sql;
+source ./db/schema.sql;
 ```
 
 Once you have the database created, you can feed the app with existing seeds in the command line and start the app with below command:
